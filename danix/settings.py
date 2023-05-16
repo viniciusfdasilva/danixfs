@@ -31,6 +31,8 @@ SECRET_KEY = 'django-insecure-emd#8q%fzc#hdb=$ursx36s=qd2)7)q#d@j*(lpzuzja6_39y4
 REPO_NAME=env('REPO_NAME')
 ROOT_FS=env('ROOT_FS')
 
+SNAPSHOT_LIMIT=env("SNAPSHOT_LIMIT")
+MAIN_REPO=env('MAIN_REPO')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
