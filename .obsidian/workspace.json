@@ -1,0 +1,167 @@
+{
+  "main": {
+    "id": "683db9948478d0f5",
+    "type": "split",
+    "children": [
+      {
+        "id": "a905c00f12ba46a8",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "9dc0c2825057834f",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "README.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "7e868bf1b448074e",
+    "type": "split",
+    "children": [
+      {
+        "id": "8fca1960ef31b421",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "25fbe0fcd9c25fd0",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "dff4013cf8dfedc3",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "83bfd13d38d5b76d",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "d0b0379d5ff97957",
+    "type": "split",
+    "children": [
+      {
+        "id": "2f341c12d53e65aa",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "b32b580e05d21b5c",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "README.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "bbfc208669b9169d",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "README.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "621cfddeb8f85c0a",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "4d5cce8fb3df8ab2",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "README.md"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "9dc0c2825057834f",
+  "lastOpenFiles": [
+    "Pasted image 20230516121302.png",
+    "README.md",
+    "img/img.vi.png",
+    "Pasted image 20230516120949.png",
+    "img/img_v.png",
+    "img/img_iv.png",
+    "example.png.md",
+    "img/img_iii.png",
+    "img/img_ii.png",
+    "img/img_i.png",
+    "img/logo.png",
+    "img",
+    "db.sqlite3-journal",
+    "logo.png.md",
+    "logo.png"
+  ]
+}

@@ -111,7 +111,7 @@ class Environment(models.Model):
 
                 repeat_template = (6-len(template)) * ' '
 
-                print(f"  {name[0:11]}{repeat}           {template}{repeat_template}          {environment.created}         {environment.filesystem_name}       Alpine        {status_icon}      11 GB")
+                print(f"  {name[0:11]}{repeat}           {template}{repeat_template}          {environment.created}         {environment.filesystem_name}       Alpine        {status_icon}       211 MB")
 
         print("=============================================================================================================================================")
 
@@ -217,9 +217,9 @@ class Snapshot(models.Model):
 
         snapshots = Snapshot.objects.all()
 
-        print("=========================================================================================================================================")
+        print("==========================================================================================================================================")
         print("|            SNAPSHOT NAME             |          ENVIRONMENT NAME            |         CREATED       |     LAST SNAPSHOT     |   SIZE   |")
-        print("=========================================================================================================================================")
+        print("==========================================================================================================================================")
 
         if snapshots.count() > 0:
             for snapshot in snapshots:
@@ -233,7 +233,7 @@ class Snapshot(models.Model):
                     repeated = 14*' '
                     environment_name = f'Environment Removed 🔴{repeated}'
 
-                print(f" {name}     {environment_name}         {snapshot.created}              {lastsnapshot_icon}             11 GB")
+                print(f" {name}     {environment_name}         {snapshot.created}              {lastsnapshot_icon}            73,5 MB ")
         print("==========================================================================================================================================")
 
     class Meta:
