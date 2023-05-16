@@ -27,13 +27,6 @@ usages.add_argument("-sb", "--snapshotback",        help="Back snapshot",   requ
 
 usages.add_argument("-o", "--option",   choices=["clike", "java", "python", "ruby"], required=False)
 
-#fullstack_package = parser.add_argument_group("WebStack", "")
-
-#fullstack_package.add_argument("-d","--db", type=str, required=False)
-#fullstack_package.add_argument("-w", "--webserver", type=str, required=False)
-#fullstack_package.add_argument("-f", "--framework", type=str, required=False)
-#fullstack_package.add_argument("-e", "--env_name", type=str, required=False)
-
 args = parser.parse_args()
 
 languanges_and_softwares = {
@@ -55,7 +48,15 @@ if args.start:
     Environment.start_environment(args.start)
 
 if args.rm:
-    Environment.rm_environment(args.rm)
+     user_confirm = input("Type 'y' to continue: ")
+     
+     if user_confirm == 'y':
+        environments = str(args.rm).split(" ")
+    
+        for environment in environments:
+            Environment.rm_environment(environment)
+            exit(0)
+     print("[Danix]: System abort!")
 
 if args.stop:
     Environment.stop_environment(args.stop)
@@ -84,5 +85,11 @@ if args.snapshotremove:
     user_confirm = input("Type y to continue: ")
     
     if user_confirm == 'y':
-        Snapshot.rm_snapshot(args.snapshotremove)
+
+        snapshots = str(args.snapshotremove).split(" ")
+    
+        for snapshot in snapshots:
+            Snapshot.rm_snapshot(snapshot)
+            exit(0)
+
     print("[Danix]: System abort!")

@@ -4,7 +4,6 @@ from danixfs import Danix
 from datetime import datetime
 from settings import SNAPSHOT_LIMIT
 from django.core.exceptions import ValidationError
-
 class Environment(models.Model):
     filesystem_name = models.UUIDField()
     status         = models.BooleanField(default=True)
@@ -39,19 +38,21 @@ class Environment(models.Model):
 
     @staticmethod
     def rm_environment(filesystem_name):
+        try:
+            environment = Environment.objects.filter(filesystem_name=filesystem_name)
 
-        environment = Environment.objects.filter(filesystem_name=filesystem_name)
+            if environment.count() == 0:
+                print("Environment does not exist!")
+                exit(1)
+            else:
 
-        if environment.count() == 0:
+                Danix.rm(filesystem_name)
+                env = environment.first()
+                env.delete()
+                print(f"Environment removed successfully! - {filesystem_name}")
+        except Exception:
             print("Environment does not exist!")
             exit(1)
-        else:
-
-            Danix.rm(filesystem_name)
-            env = environment.first()
-            env.delete()
-            print("Environment removed successfully!")
-            exit(0)
 
 
     @staticmethod
@@ -138,8 +139,7 @@ class Snapshot(models.Model):
                 if resp == 0:
                     Snapshot.objects.get(snapshot_name=snapshot_name).delete()
 
-                    print("Snapshot removed successfully")
-                    exit(0)
+                    print(f"Snapshot removed successfully - {snapshot_name}")
                 else:
                     print("Error: Snapshot can not remove")
                     exit(1)
@@ -179,10 +179,11 @@ class Snapshot(models.Model):
     def create(subsystem_name):
         try:
             environment = Environment.objects.get(filesystem_name=subsystem_name)
+           
             environment_id = environment.id
             snapshots      = Snapshot.objects.filter(environment_id=environment_id)
 
-            if snapshots.count() > int(SNAPSHOT_LIMIT):
+            if snapshots.count() >= int(SNAPSHOT_LIMIT):
                 print("Snapshot limit exceeded! Please remove 1 snapshot to continue")
                 exit(1)
             else:
@@ -207,8 +208,7 @@ class Snapshot(models.Model):
                     print("Snapshot create error!")
                     exit(1)
 
-        except ValidationError:
-
+        except Exception:
             print("Snapshot create error: Environment does not exist!")
             exit(1)
 
@@ -225,7 +225,7 @@ class Snapshot(models.Model):
             for snapshot in snapshots:
 
                 name = str(snapshot.snapshot_name)
-                lastsnapshot_icon = "🟢 Yes" if snapshot.last else "🟠 No"
+                lastsnapshot_icon = "🟢 Yes" if snapshot.last else "🟠 No "
 
                 if snapshot.environment_id:
                     environment_name = Environment.objects.filter(id=snapshot.environment_id.id).first().filesystem_name
