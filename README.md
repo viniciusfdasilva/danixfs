@@ -39,5 +39,3 @@ $ sudo make config
 ```shell 
 $ sudo python main.py -h
 ```
-
-![[img_vi.png]]
