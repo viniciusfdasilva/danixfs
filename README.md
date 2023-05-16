@@ -40,4 +40,4 @@ $ sudo make config
 $ sudo python main.py -h
 ```
 
-![[img.vi.png]]
+![[img_vi.png]]
