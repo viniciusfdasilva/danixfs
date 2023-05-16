@@ -1,4 +1,5 @@
 import uuid, os, settings, app
+from sh import du
 from settings import MAIN_REPO
 from time import sleep
 
@@ -13,10 +14,20 @@ class Danix():
         return os.system(f"rm -r {MAIN_REPO}{filesystem_name}")
 
     @staticmethod
+    def get_size(environment_name, snapshot_name):
+        try:
+            if snapshot_name is None:
+                return du(f'{MAIN_REPO}{environment_name}/','-ch').split('\n')[-2].split('\t')[0]
+            else:
+                return du(f'{MAIN_REPO}.snapshots/{snapshot_name}/{environment_name}.tar.gz','-ch').split('\n')[-2].split('\t')[0]
+        except Exception:
+            return "0M"
+        
+    @staticmethod
     def make_snapshot(filesystem_name, snapshot_name):
 
-        os.system(f"mkdir {MAIN_REPO}.snapshots/{snapshot_name}")
-        resp = os.system(f"tar -czf {MAIN_REPO}.snapshots/{snapshot_name}/{filesystem_name}.tar.gz {MAIN_REPO}{filesystem_name}/")
+        os.system(f"mkdir {MAIN_REPO}.snapshots/{snapshot_name} >/dev/null 2>&1")
+        resp = os.system(f"tar czf {MAIN_REPO}.snapshots/{snapshot_name}/{filesystem_name}.tar.gz {MAIN_REPO}{filesystem_name}/ >/dev/null 2>&1")
         
         return resp
     
@@ -24,7 +35,7 @@ class Danix():
     def back_snapshot(filesystem_name, snapshot_name):
 
         os.system(f"rm -r {MAIN_REPO}{filesystem_name} > /dev/null")  
-        resp1 = os.system(f"tar -xf {MAIN_REPO}.snapshots/{snapshot_name}/{filesystem_name}.tar.gz -C {MAIN_REPO}")
+        resp1 = os.system(f"tar -xf {MAIN_REPO}.snapshots/{snapshot_name}/{filesystem_name}.tar.gz -C {MAIN_REPO} >/dev/null 2>&1")
         resp2 = os.system(f"mv {MAIN_REPO}/opt/danix/{filesystem_name} {MAIN_REPO}")
         resp3 = os.system(f"rm -r {MAIN_REPO}opt")
 

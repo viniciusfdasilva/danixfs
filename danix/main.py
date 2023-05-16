@@ -1,3 +1,4 @@
+#!./venv/bin/python
 import argparse, os
 import app
 from utils import is_root
@@ -55,7 +56,8 @@ if args.rm:
     
         for environment in environments:
             Environment.rm_environment(environment)
-            exit(0)
+        
+        exit(0)
      print("[Danix]: System abort!")
 
 if args.stop:
@@ -90,6 +92,6 @@ if args.snapshotremove:
     
         for snapshot in snapshots:
             Snapshot.rm_snapshot(snapshot)
-            exit(0)
+        exit(0)
 
     print("[Danix]: System abort!")

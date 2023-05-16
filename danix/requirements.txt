@@ -1,3 +1,4 @@
 django
 argparse
 django-environ
+sh

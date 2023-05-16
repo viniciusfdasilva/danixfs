@@ -18,7 +18,7 @@ class Environment(models.Model):
             environment = Environment.objects.filter(filesystem_name=filesystem_name)
 
             if environment.count() == 0:
-                print("Environment does exist!")
+                print("Environment does not exist!")
                 exit(1)
             else:
                 if environment.first().status:
@@ -33,7 +33,7 @@ class Environment(models.Model):
                     exit(1)
 
         except ValidationError as error:
-            print("Environment doenst exist!")
+            print("Environment doenst not exist!")
             exit(1)
 
     @staticmethod
@@ -98,9 +98,9 @@ class Environment(models.Model):
     def list_environments():
 
         environments = Environment.objects.all()
-        print("============================================================================================================================================")
-        print("|  ENVIRONMENT NAME  |  TEMPLATE  |       CREATED         |            SUBSYSTEM NAME            |     IMAGE     |      STATUS   |   SIZE   |")
-        print("=============================================================================================================================================")
+        print("===============================================================================================================================================")
+        print("|  ENVIRONMENT NAME  |  TEMPLATE  |       CREATED         |            SUBSYSTEM NAME            |     IMAGE     |      STATUS   |   SIZE     |")
+        print("|=============================================================================================================================================|")
 
         if environments.count() > 0:
             for environment in environments:
@@ -112,9 +112,10 @@ class Environment(models.Model):
 
                 repeat_template = (6-len(template)) * ' '
 
-                print(f"  {name[0:11]}{repeat}           {template}{repeat_template}          {environment.created}         {environment.filesystem_name}       Alpine        {status_icon}       211 MB")
+                size = Danix.get_size(environment.filesystem_name, None)
+                print(f"|  {name[0:11]}{repeat}           {template}{repeat_template}          {environment.created}         {environment.filesystem_name}        Alpine        {status_icon}      {size}B   |")
 
-        print("=============================================================================================================================================")
+        print("===============================================================================================================================================")
 
 
     class Meta:
@@ -195,12 +196,17 @@ class Snapshot(models.Model):
 
                 snapshot_name = uuid.uuid4()
 
+                print('Wait a minute! Taking snapshot')
                 snapshot = Snapshot.objects.create(snapshot_name=snapshot_name,environment_id=environment).save()
                 resp = Danix.make_snapshot(subsystem_name, snapshot_name)
 
                 if resp == 0:
                     print("Snapshot created successfully")
-                    print(f"Snapshot name {snapshot_name}")
+                    print(f"Snapshot name {snapshot_name}\n")
+                    print(f"======================================")
+                    print(f"Environment size: {Danix.get_size(subsystem_name, None)}B")
+                    print(f"Snapshot size:    {Danix.get_size(subsystem_name, snapshot_name)}B")
+                    print(f"======================================")
                     exit(0)
                 else:
 
@@ -217,9 +223,9 @@ class Snapshot(models.Model):
 
         snapshots = Snapshot.objects.all()
 
-        print("==========================================================================================================================================")
-        print("|            SNAPSHOT NAME             |          ENVIRONMENT NAME            |         CREATED       |     LAST SNAPSHOT     |   SIZE   |")
-        print("==========================================================================================================================================")
+        print("===========================================================================================================================================")
+        print("|            SNAPSHOT NAME             |          ENVIRONMENT NAME            |         CREATED       |     LAST SNAPSHOT     |    SIZE    |")
+        print("|==========================================================================================================================================|")
 
         if snapshots.count() > 0:
             for snapshot in snapshots:
@@ -228,13 +234,17 @@ class Snapshot(models.Model):
                 lastsnapshot_icon = "🟢 Yes" if snapshot.last else "🟠 No "
 
                 if snapshot.environment_id:
+                    
+                    
                     environment_name = Environment.objects.filter(id=snapshot.environment_id.id).first().filesystem_name
+                    size = Danix.get_size(environment_name, name)
                 else:
                     repeated = 14*' '
                     environment_name = f'Environment Removed 🔴{repeated}'
-
-                print(f" {name}     {environment_name}         {snapshot.created}              {lastsnapshot_icon}            73,5 MB ")
-        print("==========================================================================================================================================")
+                    size = "---"
+                
+                print(f"| {name}     {environment_name}         {snapshot.created}              {lastsnapshot_icon}              {size}B   |")
+        print("===========================================================================================================================================")
 
     class Meta:
         db_table = "snapshot"
