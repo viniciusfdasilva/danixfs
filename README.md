@@ -25,10 +25,10 @@ Avaliable system arguments:
 ![](./img/img_iii.png)
 ### System Environments
 
-![[img_iv.png]]
+![](./img/img_iv.png)
 ### Environments Snapthots
 
-![[img_v.png]]
+![](./img/img_v.png)
 
 # Run Danix
 
@@ -39,3 +39,5 @@ $ sudo make config
 ```shell 
 $ sudo python main.py -h
 ```
+
+![](./img/img_vi.png)
