@@ -10,7 +10,7 @@ REPO_NAME=https://silvavinicius.com.br/danixfs/
 config:
 
 	@mkdir $(MAIN_REPO) > /dev/null 2>&1
-	@mkdir $(MAIN_REPO)/.snapshot > /dev/null 2>&1
+	@mkdir $(MAIN_REPO)/.snapshots > /dev/null 2>&1
 
 	@echo REPO_NAME=$(REPO_NAME)      >> $(DANIX_PATH)/.env
 	@echo MAIN_REPO=$(MAIN_REPO)      >> $(DANIX_PATH)/.env
@@ -20,12 +20,14 @@ config:
 	@touch $(DANIX_PATH)/db/$(DB_NAME) > /dev/null 2>&1
 	@$(PIP) install -r $(DANIX_PATH)/requirements.txt > /dev/null 2>&1
 
-	$(PYTHON) $(DANIX_PATH)/manage.py migrate
+	@$(PYTHON) $(DANIX_PATH)/manage.py migrate
 
+	@echo Danix configured successfully! Please run make aliases
+
+aliases:
 	@alias sudo='sudo '
 	@alias danix="python main.py"
-
-	@echo Danix configured successfully! Please run danix -h or python main.py -h
+	@echo  Please run danix -h or python main.py -h
 
 clean:
 
