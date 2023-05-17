@@ -21,7 +21,7 @@ class Danix():
             else:
                 return du(f'{MAIN_REPO}.snapshots/{snapshot_name}/{environment_name}.tar.gz','-ch').split('\n')[-2].split('\t')[0]
         except Exception:
-            return "0M"
+            return "000M"
         
     @staticmethod
     def make_snapshot(filesystem_name, snapshot_name):

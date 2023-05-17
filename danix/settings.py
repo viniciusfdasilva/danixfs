@@ -82,16 +82,25 @@ TEMPLATES = [
 WSGI_APPLICATION = 'wsgi.application'
 
 
+ENV_NOT_FOUND=env('ENV_NOT_FOUND')    
+ENV_GENERIC_ERROR=env('ENV_GENERIC_ERROR')
+ENV_STOPPED_ERROR=env('ENV_STOPPED_ERROR')
+ENV_PATTERN_ERROR=env('ENV_PATTERN_ERROR')
+ENV_REMOVED=env('ENV_REMOVED')
+ENV_STARTED=env('ENV_STARTED')
+ENV_STOPPED=env('ENV_STOPPED')
+
+
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'danix/db/db.sqlite3',
+        'NAME': f"{MAIN_DIR}/db/db.sqlite3",
     }
 }
-
+print(DATABASES)
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
