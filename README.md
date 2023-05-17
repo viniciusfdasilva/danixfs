@@ -24,6 +24,13 @@ essentials packages and compiers from languanges choice by user:
 
 ![](./img/img_v.png)
 
+
+# Required packages
+
+    * curl 7.81.0 or higher 
+    * tar 1.34 or higher 
+    * python3 or higher
+    * pip3 or higher
 # Run Danix
 
 ```shell 
@@ -41,3 +48,24 @@ $ danix -h
 ```
 
 ![](./img/img_vi.png)
+
+
+# Common erros
+
+![](./img/img_vii.png)
+
+To fix this erro open file *registry.py* located in /usr/local/lib/python3.10/dist-packages/django/apps/
+
+Search for 
+
+```python
+raise RuntimeError("populate() isn't reentrant")" 
+```
+
+line. And replace for following code:
+
+```python
+self.app_configs = {}
+```
+
+Save file and try again
