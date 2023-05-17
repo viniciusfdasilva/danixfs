@@ -37,7 +37,7 @@ $ sudo make clean
 ```
 
 ```shell 
-$ sudo python main.py -h
+$ danix -h
 ```
 
 ![](./img/img_vi.png)
