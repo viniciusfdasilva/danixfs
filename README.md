@@ -10,12 +10,6 @@ A very simple subsystem builder!
 
 The Danixfs is a root filesystem management! Build a Alpine subsystem and pre install
 essentials packages and compiers from languanges choice by user: 
-
-Avaliable system arguments:
-
-* "clike" : Build a C/C++ environment, installing from template with cpp, g++ and clang compilers
-
-
 # Image:
 
 #### Building a clike environment
@@ -34,6 +28,12 @@ Avaliable system arguments:
 
 ```shell 
 $ sudo make config
+```
+
+To clean configuracion run:
+
+```shell
+$ sudo make clean
 ```
 
 ```shell 
