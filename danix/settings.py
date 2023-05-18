@@ -19,6 +19,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
 
 MAIN_DIR = f"{BASE_DIR}/danix"
+
 environ.Env.read_env(os.path.join(MAIN_DIR, '.env'))
 
 # Quick-start development settings - unsuitable for production

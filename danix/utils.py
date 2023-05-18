@@ -1,4 +1,26 @@
 import os
+from settings import MAIN_REPO, MAIN_DIR, BASE_DIR
+
+def check_create_dir():
+    mainrepo_resp = os.system(f"cd {MAIN_REPO} >/dev/null 2>&1")
+    snapshot_resp = os.system(f" cd {MAIN_REPO}.snapshots >/dev/null 2>&1")
+
+    return True if mainrepo_resp == 0 and snapshot_resp == 0 else False
+
+def check_create_db():
+    return True if os.system(f"cat {MAIN_DIR}/db/db.sqlite3 >/dev/null 2>&1") == 0 else False
+
+def check_create_dotenv():
+    return True if os.system(f"cat {BASE_DIR}/danix/.env >/dev/null 2>&1") == 0 else False
+
+@staticmethod
+def check_system_configuration():
+
+    check_dir_resp = check_create_dir()
+    check_db_resp  = check_create_db()
+    check_env_resp = check_create_dotenv()
+
+    return check_dir_resp and check_db_resp and check_env_resp
 
 @staticmethod
 def print_footer():
