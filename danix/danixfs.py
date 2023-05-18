@@ -1,8 +1,6 @@
-import uuid, os, settings, app
+import os, settings, app
 from sh import du
 from settings import MAIN_REPO
-from time import sleep
-
 class Danix():
 
     @staticmethod
@@ -21,7 +19,7 @@ class Danix():
             else:
                 return du(f'{MAIN_REPO}.snapshots/{snapshot_name}/{environment_name}.tar.gz','-ch').split('\n')[-2].split('\t')[0]
         except Exception:
-            return "000M"
+            return "00M"
         
     @staticmethod
     def make_snapshot(filesystem_name, snapshot_name):
@@ -47,7 +45,7 @@ class Danix():
         return os.system(f"chroot {MAIN_REPO}{filesystem_uuid}/danixfs sh {MAIN_REPO}init.d/init.sh")
 
     @staticmethod
-    def build_environment(packages, filesystem_uuid):
+    def build_environment(packages, config_comands, filesystem_uuid):
         filesystem = filesystem_uuid
 
         os.system(f"mkdir /tmp/{filesystem}")
@@ -64,6 +62,8 @@ class Danix():
         for package in packages:
             os.system(f"chroot {MAIN_REPO}{filesystem}/danixfs apk add {package}")
 
+        for command in config_comands:
+            os.system(f"chroot {MAIN_REPO}{filesystem}/danixfs {command}")
 
         os.system(f"chroot {MAIN_REPO}{filesystem}/danixfs apk add fish")
         os.system(f"chroot {MAIN_REPO}{filesystem}/danixfs apk add ruby")

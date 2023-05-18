@@ -5,7 +5,7 @@ import settings
 from danixfs import Danix
 from datetime import datetime
 from settings import SNAPSHOT_LIMIT
-from utils import print_snapshot_list_header, print_footer, print_environment_list_header, is_unique_database_tuple, get_message, check_equal_sentence, check_not_equal_sentence
+from utils import get_size_in_mb_or_gb, print_snapshot_list_header, print_footer, print_environment_list_header, is_unique_database_tuple, get_message, check_equal_sentence, check_not_equal_sentence
 from django.core.exceptions import ValidationError
 
 def get_queryset_filtered(model, sub_attribute):
@@ -42,7 +42,7 @@ class Environment(models.Model):
                 if not check_not_equal_sentence(resp, 0):
                     
                     get_message(
-                                    message=settings.ENV_GENERIC_ERROR, 
+                                    message=f"🔴 {settings.ENV_GENERIC_ERROR}", 
                                     is_finishprogram=True, 
                                     finish_status_code=1
                                 )
@@ -50,21 +50,21 @@ class Environment(models.Model):
             elif expression ^ (not environment_first.status):
 
                 get_message(
-                                message=settings.ENV_STOPPED_ERROR,
+                                message=f"🔴 {settings.ENV_STOPPED_ERROR}",
                                 is_finishprogram=True, 
                                 finish_status_code=1
                             )   
 
             else:
                 get_message(
-                                message=settings.ENV_PATTERN_ERROR, 
+                                message=f"🔴 {settings.ENV_PATTERN_ERROR}", 
                                 is_finishprogram=True, 
                                 finish_status_code=1
                             )  
                 
         except ValidationError:
             get_message(
-                            message=settings.ENV_PATTERN_ERROR, 
+                            message=f"🔴 {settings.ENV_PATTERN_ERROR}", 
                             is_finishprogram=True, 
                             finish_status_code=1
                         )  
@@ -84,7 +84,7 @@ class Environment(models.Model):
                 if check_equal_sentence(environment_count, 0):
 
                     get_message(
-                                    message=settings.ENV_NOT_FOUND, 
+                                    message=f"🔴 {settings.ENV_NOT_FOUND}", 
                                     is_finishprogram=True, 
                                     finish_status_code=1
                                 )  
@@ -93,21 +93,21 @@ class Environment(models.Model):
                 environment.delete()
 
                 get_message(
-                                message=f"{settings.ENV_REMOVED} - {environment.filesystem_name}", 
+                                message=f"🟢 {settings.ENV_REMOVED} - {environment.filesystem_name}", 
                                 is_finishprogram=False, 
                                 finish_status_code=-1
                             ) 
             else:
 
                 get_message(
-                            message=settings.ENV_PATTERN_ERROR, 
+                            message=f"🔴 {settings.ENV_PATTERN_ERROR}", 
                             is_finishprogram=True, 
                             finish_status_code=1
                         )  
                 
         except Exception:
             get_message(
-                            message=settings.ENV_NOT_FOUND, 
+                            message=f"🔴 {settings.ENV_NOT_FOUND}", 
                             is_finishprogram=True, 
                             finish_status_code=1
                         ) 
@@ -126,7 +126,7 @@ class Environment(models.Model):
             if check_equal_sentence(environment_counter, 0):
 
                 get_message(
-                                message=settings.ENV_NOT_FOUND, 
+                                message=f"🔴 {settings.ENV_NOT_FOUND}", 
                                 is_finishprogram=True, 
                                 finish_status_code=1
                             ) 
@@ -135,13 +135,13 @@ class Environment(models.Model):
             environment.save()
 
             get_message(
-                            message=settings.ENV_STARTED, 
+                            message=f"🟢 {settings.ENV_STARTED}", 
                             is_finishprogram=True, 
                             finish_status_code=1
                         ) 
         else:
             get_message(
-                            message=settings.ENV_PATTERN_ERROR, 
+                            message=f"🔴 {settings.ENV_PATTERN_ERROR}", 
                             is_finishprogram=True, 
                             finish_status_code=1
                         )  
@@ -164,16 +164,16 @@ class Environment(models.Model):
 
             if check_equal_sentence(environment_counter, 0):
 
-                 get_message(message=settings.ENV_NOT_FOUND, is_finishprogram=True, finish_status_code=1) 
+                 get_message(message=f"🔴 {settings.ENV_NOT_FOUND}", is_finishprogram=True, finish_status_code=1) 
 
             environment.status = False
             environment.save()
 
-            get_message(message=settings.ENV_STOPPED, is_finishprogram=True, finish_status_code=1) 
+            get_message(message=f"🟢 {settings.ENV_STOPPED}", is_finishprogram=True, finish_status_code=1) 
 
         else:
             get_message(
-                            message=settings.ENV_PATTERN_ERROR, 
+                            message=f"🔴 {settings.ENV_PATTERN_ERROR}", 
                             is_finishprogram=True, 
                             finish_status_code=1
                         )  
@@ -197,13 +197,7 @@ class Environment(models.Model):
 
                 size_str = str(Danix.get_size(environment.filesystem_name, None))
 
-                size = int(size_str.replace("M",""))
-                size_str = size_str.replace("M","MB")
-
-                if size >= 1000:
-                    size_str = f"{round(size/1000, 1)}G"
-                elif size <= 100:
-                    size_str = size_str + " "
+                size_str = get_size_in_mb_or_gb(size_str)
                 
                 print(f"|  {name[0:11]}{(11-len(name)) * '.'}           {template}{(6-len(template)) * ' '}          {environment.created}         {environment.filesystem_name}        Alpine        {status_icon}      {size_str}    |")
 
@@ -238,22 +232,22 @@ class Snapshot(models.Model):
                         
                         Snapshot.objects.get(snapshot_name=snapshot.snapshot_name).delete()
 
-                        get_message(message=f"Snapshot removed successfully - {snapshot.snapshot_name}", is_finishprogram=False, finish_status_code=-1) 
+                        get_message(message=f"🟢 Snapshot removed successfully - {snapshot.snapshot_name}", is_finishprogram=False, finish_status_code=-1) 
                     
                     else:
-                        get_message(message="Error: Snapshot can not remove", is_finishprogram=True, finish_status_code=1) 
+                        get_message(message="🔴 Error: Snapshot can not remove", is_finishprogram=True, finish_status_code=1) 
                 else:
-                    get_message(message="Snapshot does not exist!", is_finishprogram=True, finish_status_code=1) 
+                    get_message(message="🔴 Snapshot does not exist!", is_finishprogram=True, finish_status_code=1) 
             
             else:
                 get_message(
-                            message=settings.ENV_PATTERN_ERROR, 
+                            message=f"🔴 {settings.ENV_PATTERN_ERROR}", 
                             is_finishprogram=True, 
                             finish_status_code=1
                         ) 
                  
         except ValidationError:
-            get_message(message="Snapshot does not exist!", is_finishprogram=True, finish_status_code=1)
+            get_message(message="🔴 Snapshot does not exist!", is_finishprogram=True, finish_status_code=1)
 
     @staticmethod
     def back_snapshot(snapshot_name):
@@ -271,17 +265,17 @@ class Snapshot(models.Model):
                     resp = Danix.back_snapshot(filesystem_name, snapshot.snapshot_name)
 
                     if check_equal_sentence(resp, 0):
-                        get_message(message="Snapshot roll back successfully!", is_finishprogram=True, finish_status_code=0)
+                        get_message(message="🟢 Snapshot roll back successfully!", is_finishprogram=True, finish_status_code=0)
 
-                    get_message(message="Error: Snapshot can not back", is_finishprogram=True, finish_status_code=1)
+                    get_message(message="🔴 Error: Snapshot can not back", is_finishprogram=True, finish_status_code=1)
 
-                get_message(message="Error: Environment was removed!", is_finishprogram=True, finish_status_code=1)
+                get_message(message="🔴 Error: Environment was removed!", is_finishprogram=True, finish_status_code=1)
 
-            get_message(message="Snapshot does not exist!", is_finishprogram=True, finish_status_code=1)
+            get_message(message="🔴 Snapshot does not exist!", is_finishprogram=True, finish_status_code=1)
 
         except ValidationError:
             
-            get_message(message="Snapshot does not exist!", is_finishprogram=True, finish_status_code=1)
+            get_message(message="🔴 Snapshot does not exist!", is_finishprogram=True, finish_status_code=1)
 
     @staticmethod
     def create(subsystem_name):
@@ -298,7 +292,7 @@ class Snapshot(models.Model):
                 snapshots      = Snapshot.objects.filter(environment_id=environment_id)
 
                 if snapshots.count() >= int(SNAPSHOT_LIMIT):
-                    get_message(message="Snapshot limit exceeded! Please remove 1 snapshot to continue!", is_finishprogram=True, finish_status_code=1)
+                    get_message(message="🟠 Snapshot limit exceeded! Please remove 1 snapshot to continue!", is_finishprogram=True, finish_status_code=1)
                 else:
 
                     for snapshot in snapshots:
@@ -317,7 +311,7 @@ class Snapshot(models.Model):
                     resp = Danix.make_snapshot(environment.filesystem_name, snapshot_name)
 
                     if check_equal_sentence(resp, 0):
-                        print("Snapshot created successfully")
+                        print("🟢 Snapshot created successfully")
                         print(f"Snapshot name {snapshot_name}\n")
                         print(f"======================================")
                         print(f"Environment size: {Danix.get_size(environment.filesystem_name, None)}B")
@@ -327,7 +321,7 @@ class Snapshot(models.Model):
                     else:
 
                         Snapshot.objects.get(snapshot_name=snapshot_name,environment_id=environment).delete()
-                        print("Snapshot create error!")
+                        print("🔴 Snapshot create error!")
                         exit(1)
             else:
 
@@ -338,7 +332,7 @@ class Snapshot(models.Model):
                         )  
                 
         except Exception:
-           get_message(message="Snapshot create error: Environment does not exist!", is_finishprogram=True, finish_status_code=1)
+           get_message(message="🔴 Snapshot create error: Environment does not exist!", is_finishprogram=True, finish_status_code=1)
 
     @staticmethod
     def list_snapshots():
@@ -358,19 +352,12 @@ class Snapshot(models.Model):
                     environment_name = Environment.objects.filter(id=snapshot.environment_id.id).first().filesystem_name
                     size_str = str(Danix.get_size(environment_name, name))
                     
-                    size = int(size_str.replace("M",""))
-
-                    size_str = size_str.replace("M","MB")
-
-                    if size >= 1000:
-                        size_str = f"{round(size/1000, 1)}G"
-                    elif size <= 100:
-                        size_str = size_str + " "
+                    size_str = get_size_in_mb_or_gb(size_str)
               
                 else:
 
                     environment_name = f'Environment Removed 🔴{14*" "}'
-                    size = "---"
+                    size_str = "-----"
                 
                 print(f"| {name}     {environment_name}         {snapshot.created}              {lastsnapshot_icon}              {size_str}      |")
        

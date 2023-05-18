@@ -26,7 +26,7 @@ usages.add_argument("-sr", "--snapshotremove",      help="Remove snapshot", requ
 usages.add_argument("-sc", "--snapshotcreate",      help="Create snapshot", required=False)
 usages.add_argument("-sb", "--snapshotback",        help="Back snapshot",   required=False)
 
-usages.add_argument("-o", "--option",   choices=["clike", "java", "python", "ruby"], required=False)
+usages.add_argument("-o", "--option",   choices=["clike", "java", "python", "ruby", "lua", "go", "ada"], required=False)
 
 args = parser.parse_args()
 
@@ -34,7 +34,10 @@ languanges_and_softwares = {
                                 "clike"  : Languanges.CLike(),
                                 "java"   : Languanges.Java(),
                                 "python" : Languanges.Python(),
-                                #"ruby"   : Languanges.Ruby()
+                                "ruby"   : Languanges.Ruby(),
+                                "lua"    : Languanges.Lua(),
+                                "go"     : Languanges.Go(),
+                                "ada"    : Languanges.Ada()
                             }
 
 if args.option:

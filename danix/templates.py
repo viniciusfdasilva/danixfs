@@ -10,7 +10,7 @@ class Essentials():
 class Template():
 
     @staticmethod
-    def install(packages, environment_name, template):
+    def install(packages, environment_name, config_commands, template):
 
         filesystem_name = uuid.uuid4()
 
@@ -28,8 +28,7 @@ class Template():
             joined_packages = Template.menu(packages)
 
             Environment.set_active(filesystem_name)
-            Danix.build_environment(joined_packages, filesystem_name)
-
+            Danix.build_environment(joined_packages, config_commands, filesystem_name)
 
 
     @staticmethod
@@ -42,12 +41,20 @@ class Template():
 
         print('Select essentials packages:')
         print(f'Example: 1 2 to install {packages[0]}, {packages[1]}')
+        
         packages_selected = input()
 
         list_selected_packages = []
 
-        for pos in packages_selected.split(" "):
-            list_selected_packages.append(packages[int(pos)-1])
+        try:
+
+            for pos in packages_selected.split(" "):
+                list_selected_packages.append(packages[int(pos)-1])
+
+        except Exception:
+            
+            print("🔴 Invalid option: Please select a valid menu option!\n")
+            Template.languange_menu(packages)
 
         return list_selected_packages
 
@@ -69,8 +76,14 @@ class Template():
 
         list_essentials_packages = []
 
-        for pos in essentials_packages_selected.split(" "):
-            list_essentials_packages.append(essentials_packages[int(pos)-1])
+        try:
+
+            for pos in essentials_packages_selected.split(" "):
+                list_essentials_packages.append(essentials_packages[int(pos)-1])
+
+        except Exception:
+            print("🔴 Invalid option: Please select a valid menu option!\n")
+            Template.essentials_menu()
 
         return list_essentials_packages
                 
@@ -81,22 +94,70 @@ class Template():
 class Languanges():
     class Python():
 
-        packages = ["python3", "py3-pip"]
+        packages = ["python3 py3-pip", "python3"]
+        config_commands = []
 
         def install(self, environment_name, template):
 
-            Template.install(self.packages, environment_name, template)
+            Template.install(self.packages, environment_name, self.config_commands, template)
             
     class CLike():
 
         packages = ["gcc", "g++", "clang", "rust cargo"]
+        config_commands = []
 
         def install(self, environment_name, template):
-            Template.install(self.packages, environment_name, template)
+            Template.install(self.packages, environment_name, self.config_commands, template)
 
     class Java():
 
         packages = ["openjdk8", "openjdk11", "openjdk17"]
+        config_commands = []
 
         def install(self, environment_name, template):
-            Template.install(self.packages, environment_name, template)
+            Template.install(self.packages, environment_name, self.config_commands,template)
+
+    class Ruby():
+        packages = ["ruby", "ruby-full"]
+        config_commands = []
+
+        def install(self, environment_name, template):
+            Template.install(self.packages, environment_name, self.config_commands, template)
+
+
+    class Lua():
+        
+        packages = ["lua5.3", "lua5.2"]
+        config_commands = []
+
+        def install(self, environment_name, template):
+
+            Template.install(self.packages, environment_name, self.config_commands, template)
+
+    class Ada():
+
+        packages = ["gcc gcc-gnat", "gcc", "gcc-gnat"]
+        config_commands = []
+
+        def install(self, environment_name, template):
+
+            Template.install(self.packages, environment_name, self.config_commands, template)
+
+
+    class Go():
+
+        packages = ["go", "musl-dev go"]
+        config_commands = []
+
+        config_commands = [
+            "export GOPATH=/root/go >/dev/null 2>&1",
+            "export PATH=${GOPATH}/bin:/usr/local/go/bin:$PATH >/dev/null 2>&1",
+            "export GOBIN=$GOROOT/bin >/dev/null 2>&1",
+            "mkdir -p ${GOPATH}/src ${GOPATH}/bin >/dev/null 2>&1",
+            "export GO111MODULE=on >/dev/null 2>&1",
+            "export GOCACHE=/root/go/cache >/dev/null 2>&1"
+        ]
+
+        def install(self, environment_name, template):
+            Template.install(self.packages, environment_name, self.config_commands, template)
+        

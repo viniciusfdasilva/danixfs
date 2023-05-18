@@ -4,6 +4,24 @@ import os
 def print_footer():
     print("================================================================================================================================================")
 
+@staticmethod
+def get_size_in_mb_or_gb(size_str):
+
+    try:
+
+        size = int(size_str.replace("M","").replace(",","."))
+    
+        if size >= 1000:
+
+            return f"{round(size/1000, 1)}GB"
+        elif size <= 100:
+
+            return size_str + "B "
+
+    except Exception:
+        return size_str.replace(",",".") + "B"
+       
+    return size_str + "B"
 
 @staticmethod
 def print_snapshot_list_header():
