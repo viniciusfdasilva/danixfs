@@ -11,6 +11,9 @@ def check_not_equal_sentence(left_expression, right_expression):
 @staticmethod
 def is_unique_database_tuple(model_queryset):
 
+    if model_queryset.count() == 0:
+        return Exception
+    
     return True if model_queryset.count() == 1 else False
 
 @staticmethod

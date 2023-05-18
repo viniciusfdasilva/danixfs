@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import Q
 import uuid
+import settings
 from danixfs import Danix
 from datetime import datetime
 from settings import SNAPSHOT_LIMIT
@@ -12,7 +13,7 @@ def get_queryset_filtered(model, sub_attribute):
     if model == Environment:
         return model.objects.filter(filesystem_name__startswith=sub_attribute)
     
-    return model.objects.filter(snapshot__startswith=sub_attribute)
+    return model.objects.filter(snapshot_name__startswith=sub_attribute)
 
 class Environment(models.Model):
     filesystem_name = models.UUIDField()
@@ -35,7 +36,7 @@ class Environment(models.Model):
   
             expression = is_unique_database_tuple(environment) and environment_first.status
             
-            if expression:
+            if is_unique_database_tuple(environment) and environment_first.status:
                 resp = Danix.navigate(environment_first.filesystem_name)
                 
                 if not check_not_equal_sentence(resp, 0):
@@ -46,7 +47,7 @@ class Environment(models.Model):
                                     finish_status_code=1
                                 )
         
-            elif expression ^ (not environment.status):
+            elif expression ^ (not environment_first.status):
 
                 get_message(
                                 message=settings.ENV_STOPPED_ERROR,
@@ -71,28 +72,39 @@ class Environment(models.Model):
         
     @staticmethod
     def rm_environment(filesystem_name):
-        try:
-            environment = Environment.objects.filter(filesystem_name=filesystem_name)
-            environment_count = environment.count()
-            environment =  environment.first()
 
-            if check_equal_sentence(environment_count, 0):
+        try:
+            environment = get_queryset_filtered(Environment, filesystem_name)
+
+            if is_unique_database_tuple(environment):
+
+                environment_count = environment.count()
+                environment =  environment.first()
+
+                if check_equal_sentence(environment_count, 0):
+
+                    get_message(
+                                    message=settings.ENV_NOT_FOUND, 
+                                    is_finishprogram=True, 
+                                    finish_status_code=1
+                                )  
+
+                Danix.rm(environment.filesystem_name)
+                environment.delete()
 
                 get_message(
-                                message=settings.ENV_NOT_FOUND, 
-                                is_finishprogram=True, 
-                                finish_status_code=1
-                            )  
-                
-            Danix.rm(filesystem_name)
-            environment.delete()
-            
-            get_message(
-                            message=f"{settings.ENV_REMOVED} - {filesystem_name}", 
-                            is_finishprogram=False, 
-                            finish_status_code=-1
-                        ) 
+                                message=f"{settings.ENV_REMOVED} - {environment.filesystem_name}", 
+                                is_finishprogram=False, 
+                                finish_status_code=-1
+                            ) 
+            else:
 
+                get_message(
+                            message=settings.ENV_PATTERN_ERROR, 
+                            is_finishprogram=True, 
+                            finish_status_code=1
+                        )  
+                
         except Exception:
             get_message(
                             message=settings.ENV_NOT_FOUND, 
@@ -104,27 +116,35 @@ class Environment(models.Model):
     @staticmethod
     def start_environment(filesystem_name):
 
-        environment = Environment.objects.filter(filesystem_name=filesystem_name)
-        environment_counter = environment.count()
-        environment = environment.first()
+        environment = get_queryset_filtered(Environment, filesystem_name)
 
-        if check_equal_sentence(environment_counter, 0):
+        if is_unique_database_tuple(environment):
+            
+            environment_counter = environment.count()
+            environment = environment.first()
+
+            if check_equal_sentence(environment_counter, 0):
+
+                get_message(
+                                message=settings.ENV_NOT_FOUND, 
+                                is_finishprogram=True, 
+                                finish_status_code=1
+                            ) 
+
+            environment.status = True
+            environment.save()
 
             get_message(
-                            message=settings.ENV_NOT_FOUND, 
+                            message=settings.ENV_STARTED, 
                             is_finishprogram=True, 
                             finish_status_code=1
                         ) 
-
-        environment.status = True
-        environment.save()
-
-        get_message(
-                        message=settings.ENV_STARTED, 
-                        is_finishprogram=True, 
-                        finish_status_code=1
-                    ) 
-        
+        else:
+            get_message(
+                            message=settings.ENV_PATTERN_ERROR, 
+                            is_finishprogram=True, 
+                            finish_status_code=1
+                        )  
     @staticmethod
     def set_active(filesystem_name):
 
@@ -135,19 +155,29 @@ class Environment(models.Model):
     @staticmethod
     def stop_environment(filesystem_name):
  
-        environment = Environment.objects.filter(filesystem_name=filesystem_name)
-        environment_counter = environment.count()
-        environment = environment.first()
+        environment = get_queryset_filtered(Environment, filesystem_name)
+        
+        if is_unique_database_tuple(environment):
 
-        if check_equal_sentence(environment_counter, 0):
-             
-             get_message(message=settings.ENV_NOT_FOUND, is_finishprogram=True, finish_status_code=1) 
-     
-        environment.status = False
-        environment.save()
+            environment_counter = environment.count()
+            environment = environment.first()
 
-        get_message(message=settings.ENV_STOPPED, is_finishprogram=True, finish_status_code=1) 
+            if check_equal_sentence(environment_counter, 0):
 
+                 get_message(message=settings.ENV_NOT_FOUND, is_finishprogram=True, finish_status_code=1) 
+
+            environment.status = False
+            environment.save()
+
+            get_message(message=settings.ENV_STOPPED, is_finishprogram=True, finish_status_code=1) 
+
+        else:
+            get_message(
+                            message=settings.ENV_PATTERN_ERROR, 
+                            is_finishprogram=True, 
+                            finish_status_code=1
+                        )  
+            
     @staticmethod
     def list_environments():
 
@@ -187,42 +217,60 @@ class Snapshot(models.Model):
     @staticmethod
     def rm_snapshot(snapshot_name):
         try:
-            snapshot = Snapshot.objects.filter(snapshot_name=snapshot_name)
+            snapshot = get_queryset_filtered(Snapshot, snapshot_name)
             
-            snapshot_counter = snapshot.count()
+            if is_unique_database_tuple(snapshot):
 
-            if snapshot_counter > 0:
+                snapshot_counter = snapshot.count()
 
-                resp = Danix.remove_snapshot(snapshot_name)
-                
-                if check_equal_sentence(resp, 0):
-                    Snapshot.objects.get(snapshot_name=snapshot_name).delete()
+                if snapshot_counter > 0:
+                    
+                    snapshot = snapshot.first()
+                    resp = Danix.remove_snapshot(snapshot.snapshot_name)
 
-                    get_message(message=f"Snapshot removed successfully - {snapshot_name}", is_finishprogram=False, finish_status_code=-1) 
+                    if check_equal_sentence(resp, 0):
+                        
+                        Snapshot.objects.get(snapshot_name=snapshot.snapshot_name).delete()
 
-                get_message(message="Error: Snapshot can not remove", is_finishprogram=True, finish_status_code=1) 
+                        get_message(message=f"Snapshot removed successfully - {snapshot.snapshot_name}", is_finishprogram=False, finish_status_code=-1) 
+                    
+                    else:
+                        get_message(message="Error: Snapshot can not remove", is_finishprogram=True, finish_status_code=1) 
+                else:
+                    get_message(message="Snapshot does not exist!", is_finishprogram=True, finish_status_code=1) 
             
-            get_message(message="Snapshot does not exist!", is_finishprogram=True, finish_status_code=1) 
-
+            else:
+                get_message(
+                            message=settings.ENV_PATTERN_ERROR, 
+                            is_finishprogram=True, 
+                            finish_status_code=1
+                        ) 
+                 
         except ValidationError:
             get_message(message="Snapshot does not exist!", is_finishprogram=True, finish_status_code=1)
 
     @staticmethod
     def back_snapshot(snapshot_name):
         try:
-            snapshot = Snapshot.objects.filter(snapshot_name=snapshot_name)
-
-            if snapshot.count() > 0:
-
-                filesystem_name = Environment.objects.filter(id=snapshot.first().environment_id.id).first().filesystem_name
-
-                resp = Danix.back_snapshot(filesystem_name, snapshot_name)
-
-                if check_equal_sentence(resp, 0):
-                    get_message(message="Snapshot roll back successfully!", is_finishprogram=True, finish_status_code=0)
-
-                get_message(message="Error: Snapshot can not back", is_finishprogram=True, finish_status_code=1)
+            snapshot = get_queryset_filtered(Snapshot, snapshot_name)
+            snapshot_counter = snapshot.count()
             
+            snapshot = snapshot.first()
+
+            if snapshot_counter > 0:
+                
+                if snapshot.environment_id:
+                    filesystem_name = Environment.objects.filter(id=snapshot.environment_id.id).first().filesystem_name
+
+                    resp = Danix.back_snapshot(filesystem_name, snapshot.snapshot_name)
+
+                    if check_equal_sentence(resp, 0):
+                        get_message(message="Snapshot roll back successfully!", is_finishprogram=True, finish_status_code=0)
+
+                    get_message(message="Error: Snapshot can not back", is_finishprogram=True, finish_status_code=1)
+
+                get_message(message="Error: Environment was removed!", is_finishprogram=True, finish_status_code=1)
+
             get_message(message="Snapshot does not exist!", is_finishprogram=True, finish_status_code=1)
 
         except ValidationError:
@@ -231,42 +279,58 @@ class Snapshot(models.Model):
 
     @staticmethod
     def create(subsystem_name):
+
         try:
-            environment = Environment.objects.get(filesystem_name=subsystem_name)
-           
-            environment_id = environment.id
-            snapshots      = Snapshot.objects.filter(environment_id=environment_id)
 
-            if snapshots.count() >= int(SNAPSHOT_LIMIT):
-                get_message(message="Snapshot limit exceeded! Please remove 1 snapshot to continue!", is_finishprogram=True, finish_status_code=1)
-            else:
+            environment = get_queryset_filtered(Environment, subsystem_name)
 
-                for snapshot in snapshots:
+            if is_unique_database_tuple(environment):
 
-                    snapshot.last = False
-                    snapshot.save()
+                environment = environment.first()
 
-                snapshot_name = uuid.uuid4()
+                environment_id = environment.id
+                snapshots      = Snapshot.objects.filter(environment_id=environment_id)
 
-                print('Wait a minute! Taking snapshot')
-
-                snapshot = Snapshot.objects.create(snapshot_name=snapshot_name,environment_id=environment).save()
-                resp = Danix.make_snapshot(subsystem_name, snapshot_name)
-
-                if check_equal_sentence(resp, 0):
-                    print("Snapshot created successfully")
-                    print(f"Snapshot name {snapshot_name}\n")
-                    print(f"======================================")
-                    print(f"Environment size: {Danix.get_size(subsystem_name, None)}B")
-                    print(f"Snapshot size:    {Danix.get_size(subsystem_name, snapshot_name)}B")
-                    print(f"======================================")
-                    exit(0)
+                if snapshots.count() >= int(SNAPSHOT_LIMIT):
+                    get_message(message="Snapshot limit exceeded! Please remove 1 snapshot to continue!", is_finishprogram=True, finish_status_code=1)
                 else:
 
-                    Snapshot.objects.get(snapshot_name=snapshot_name,environment_id=environment).delete()
-                    print("Snapshot create error!")
-                    exit(1)
+                    for snapshot in snapshots:
 
+                        snapshot.last = False
+                        snapshot.save()
+
+                    snapshot_name = uuid.uuid4()
+
+                    print('Wait a minute! Taking snapshot')
+
+                    environment_queryset = Environment.objects.get(filesystem_name=environment.filesystem_name)
+
+                    snapshot = Snapshot.objects.create(snapshot_name=snapshot_name, environment_id=environment_queryset).save()
+
+                    resp = Danix.make_snapshot(environment.filesystem_name, snapshot_name)
+
+                    if check_equal_sentence(resp, 0):
+                        print("Snapshot created successfully")
+                        print(f"Snapshot name {snapshot_name}\n")
+                        print(f"======================================")
+                        print(f"Environment size: {Danix.get_size(environment.filesystem_name, None)}B")
+                        print(f"Snapshot size:    {Danix.get_size(environment.filesystem_name, snapshot_name)}B")
+                        print(f"======================================")
+                        exit(0)
+                    else:
+
+                        Snapshot.objects.get(snapshot_name=snapshot_name,environment_id=environment).delete()
+                        print("Snapshot create error!")
+                        exit(1)
+            else:
+
+                get_message(
+                            message=settings.ENV_PATTERN_ERROR, 
+                            is_finishprogram=True, 
+                            finish_status_code=1
+                        )  
+                
         except Exception:
            get_message(message="Snapshot create error: Environment does not exist!", is_finishprogram=True, finish_status_code=1)
 

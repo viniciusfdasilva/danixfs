@@ -7,11 +7,11 @@ class Danix():
 
     @staticmethod
     def remove_snapshot(snapshot_name):
-        return os.system(f"rm -r {MAIN_REPO}.snapshots/{snapshot_name}")
+        return os.system(f"rm -r {MAIN_REPO}.snapshots/{snapshot_name} >/dev/null 2>&1")
 
     @staticmethod
     def rm(filesystem_name):
-        return os.system(f"rm -r {MAIN_REPO}{filesystem_name}")
+        return os.system(f"rm -r {MAIN_REPO}{filesystem_name} >/dev/null 2>&1")
 
     @staticmethod
     def get_size(environment_name, snapshot_name):
