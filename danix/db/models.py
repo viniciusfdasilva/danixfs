@@ -198,11 +198,14 @@ class Environment(models.Model):
                 size_str = str(Danix.get_size(environment.filesystem_name, None))
 
                 size = int(size_str.replace("M",""))
+                size_str = size_str.replace("M","MB")
 
                 if size >= 1000:
                     size_str = f"{round(size/1000, 1)}G"
+                elif size <= 100:
+                    size_str = size_str + " "
                 
-                print(f"|  {name[0:11]}{(11-len(name)) * '.'}           {template}{(6-len(template)) * ' '}          {environment.created}         {environment.filesystem_name}        Alpine        {status_icon}      {size_str}B    |")
+                print(f"|  {name[0:11]}{(11-len(name)) * '.'}           {template}{(6-len(template)) * ' '}          {environment.created}         {environment.filesystem_name}        Alpine        {status_icon}      {size_str}    |")
 
         print_footer()
 
@@ -357,16 +360,19 @@ class Snapshot(models.Model):
                     
                     size = int(size_str.replace("M",""))
 
+                    size_str = size_str.replace("M","MB")
+
                     if size >= 1000:
                         size_str = f"{round(size/1000, 1)}G"
-                    
-
+                    elif size <= 100:
+                        size_str = size_str + " "
+              
                 else:
 
                     environment_name = f'Environment Removed 🔴{14*" "}'
                     size = "---"
                 
-                print(f"| {name}     {environment_name}         {snapshot.created}              {lastsnapshot_icon}              {size_str}B      |")
+                print(f"| {name}     {environment_name}         {snapshot.created}              {lastsnapshot_icon}              {size_str}      |")
        
         print_footer()
 
