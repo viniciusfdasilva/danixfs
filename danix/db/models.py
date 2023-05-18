@@ -5,7 +5,7 @@ import settings
 from danixfs import Danix
 from datetime import datetime
 from settings import SNAPSHOT_LIMIT
-from utils import is_unique_database_tuple, get_message, check_equal_sentence, check_not_equal_sentence
+from utils import print_snapshot_list_header, print_footer, print_environment_list_header, is_unique_database_tuple, get_message, check_equal_sentence, check_not_equal_sentence
 from django.core.exceptions import ValidationError
 
 def get_queryset_filtered(model, sub_attribute):
@@ -184,9 +184,7 @@ class Environment(models.Model):
         environments = Environment.objects.all()
         environment_counter = environments.count()
 
-        print("===============================================================================================================================================")
-        print("|  ENVIRONMENT NAME  |  TEMPLATE  |       CREATED         |            SUBSYSTEM NAME            |     IMAGE     |      STATUS   |   SIZE     |")
-        print("|=============================================================================================================================================|")
+        print_environment_list_header()
 
         if environment_counter > 0:
 
@@ -197,11 +195,16 @@ class Environment(models.Model):
                 status_icon = "🟢 Running" if environment.status else "🔴 Stopped"
                 template = str(environment.template)
 
-                size = Danix.get_size(environment.filesystem_name, None)
+                size_str = str(Danix.get_size(environment.filesystem_name, None))
 
-                print(f"|  {name[0:11]}{(11-len(name)) * '.'}           {template}{(6-len(template)) * ' '}          {environment.created}         {environment.filesystem_name}        Alpine        {status_icon}      {size}B   |")
+                size = int(size_str.replace("M",""))
 
-        print("===============================================================================================================================================")
+                if size >= 1000:
+                    size_str = f"{round(size/1000, 1)}G"
+                
+                print(f"|  {name[0:11]}{(11-len(name)) * '.'}           {template}{(6-len(template)) * ' '}          {environment.created}         {environment.filesystem_name}        Alpine        {status_icon}      {size_str}B    |")
+
+        print_footer()
 
 
     class Meta:
@@ -339,9 +342,7 @@ class Snapshot(models.Model):
 
         snapshots = Snapshot.objects.all()
 
-        print("===========================================================================================================================================")
-        print("|            SNAPSHOT NAME             |          ENVIRONMENT NAME            |         CREATED       |     LAST SNAPSHOT     |    SIZE    |")
-        print("|==========================================================================================================================================|")
+        print_snapshot_list_header()
 
         if snapshots.count() > 0:
             for snapshot in snapshots:
@@ -352,14 +353,22 @@ class Snapshot(models.Model):
                 if snapshot.environment_id:
                     
                     environment_name = Environment.objects.filter(id=snapshot.environment_id.id).first().filesystem_name
-                    size = Danix.get_size(environment_name, name)
+                    size_str = str(Danix.get_size(environment_name, name))
+                    
+                    size = int(size_str.replace("M",""))
+
+                    if size >= 1000:
+                        size_str = f"{round(size/1000, 1)}G"
+                    
+
                 else:
 
                     environment_name = f'Environment Removed 🔴{14*" "}'
                     size = "---"
                 
-                print(f"| {name}     {environment_name}         {snapshot.created}              {lastsnapshot_icon}              {size}B   |")
-        print("===========================================================================================================================================")
+                print(f"| {name}     {environment_name}         {snapshot.created}              {lastsnapshot_icon}              {size_str}B      |")
+       
+        print_footer()
 
     class Meta:
         db_table = "snapshot"
