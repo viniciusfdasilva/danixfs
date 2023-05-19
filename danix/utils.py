@@ -1,6 +1,38 @@
 import os
 from settings import MAIN_REPO, MAIN_DIR, BASE_DIR
 
+def separate(path):
+    list_path = path.split(" ")
+
+    environment_path = None
+    environment_uuid = None
+    host_path        = None
+    environent_is_first = False
+
+    if len(list_path) >= 2:
+
+        if list_path[1]:
+            if str(list_path[1]).__contains__(":"):
+
+                environment_uuid = list_path[1].split(":")[0]
+                environment_path = list_path[1].split(":")[1]
+
+            else:
+                host_path = list_path[1]
+
+        if list_path[0]:
+
+            if str(list_path[0]).__contains__(":"):
+
+                environent_is_first = True
+                environment_uuid = list_path[0].split(":")[0]
+                environment_path = list_path[0].split(":")[1]
+
+            else:
+                host_path = list_path[0]
+                
+    return environent_is_first, environment_uuid, environment_path, host_path
+
 def check_create_dir():
     mainrepo_resp = os.system(f"cd {MAIN_REPO} >/dev/null 2>&1")
     snapshot_resp = os.system(f" cd {MAIN_REPO}.snapshots >/dev/null 2>&1")

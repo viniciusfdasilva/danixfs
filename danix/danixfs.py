@@ -4,6 +4,14 @@ from settings import MAIN_REPO
 class Danix():
 
     @staticmethod
+    def copy(environent_is_first, filesystem_name, environment_dir, host_directory):
+        
+        if environent_is_first:
+            return os.system(f"cp -r {MAIN_REPO}{filesystem_name}/danixfs{environment_dir} {host_directory} >/dev/null 2>&1")
+        else:
+            return os.system(f"cp -r {host_directory} {MAIN_REPO}{filesystem_name}/danixfs{environment_dir} >/dev/null 2>&1")
+
+    @staticmethod
     def remove_snapshot(snapshot_name):
         return os.system(f"rm -r {MAIN_REPO}.snapshots/{snapshot_name} >/dev/null 2>&1")
 

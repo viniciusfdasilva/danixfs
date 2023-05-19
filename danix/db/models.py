@@ -5,7 +5,7 @@ import settings
 from danixfs import Danix
 from datetime import datetime
 from settings import SNAPSHOT_LIMIT
-from utils import get_size_in_mb_or_gb, print_snapshot_list_header, print_footer, print_environment_list_header, is_unique_database_tuple, get_message, check_equal_sentence, check_not_equal_sentence
+from utils import separate, get_size_in_mb_or_gb, print_snapshot_list_header, print_footer, print_environment_list_header, is_unique_database_tuple, get_message, check_equal_sentence, check_not_equal_sentence
 from django.core.exceptions import ValidationError
 
 def get_queryset_filtered(model, sub_attribute):
@@ -21,6 +21,34 @@ class Environment(models.Model):
     name            = models.TextField()
     created         = models.DateField(default=datetime.now())
     template        = models.TextField(default="")
+    
+
+    @staticmethod
+    def copy(path):
+
+        environent_is_first , environment_uuid, environment_dir, host_directory = separate(path)
+
+        if environment_uuid and environment_dir and host_directory:
+            
+            environment = get_queryset_filtered(Environment, environment_uuid)
+            filesystem_name = environment.first().filesystem_name
+
+            resp = Danix.copy(
+                                environent_is_first, 
+                                filesystem_name, 
+                                environment_dir, 
+                                host_directory
+                            )
+
+            if check_equal_sentence(resp, 0):
+                get_message("🟢 Elements copyed successfuly!", True, 0)        
+            else:
+                get_message("🔴 Copy error!", True, 1)
+        else:
+            if environent_is_first:
+                get_message(f"🔴 Syntax error or element exist in {host_directory}!", True, 1)
+            else:
+                get_message(f"🔴 Syntax error or path not exist in subsystem!", True, 1)
     
     @staticmethod
     def navigate(filesystem_name):

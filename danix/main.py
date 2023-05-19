@@ -25,6 +25,7 @@ usages.add_argument("-n", "--navigate",             help="Navigate inside the en
 usages.add_argument("-sr", "--snapshotremove",      help="Remove snapshot", required=False)
 usages.add_argument("-sc", "--snapshotcreate",      help="Create snapshot", required=False)
 usages.add_argument("-sb", "--snapshotback"  ,      help="Back snapshot",   required=False)
+usages.add_argument("-c", "--copy"  ,               help="Copy files and directories",   required=False)
 
 usages.add_argument("-o", "--option",   choices=["clike", "java", "python", "ruby", "lua", "go", "ada"], required=False)
 
@@ -98,6 +99,9 @@ if check_system_configuration():
             exit(0)
 
         print("🔴 [Danix]: System abort!")
+
+    if args.copy:
+        Environment.copy(args.copy)
 else:
     print("🔴 Danix system is not configured!")
     print("Plase run 'make config'")
