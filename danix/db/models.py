@@ -41,7 +41,7 @@ class Environment(models.Model):
                             )
 
             if check_equal_sentence(resp, 0):
-                get_message("🟢 Elements copyed successfuly!", True, 0)        
+                get_message("🟢 Elements copied successfuly!", True, 0)        
             else:
                 get_message("🔴 Copy error!", True, 1)
         else:
@@ -260,7 +260,12 @@ class Snapshot(models.Model):
                         
                         Snapshot.objects.get(snapshot_name=snapshot.snapshot_name).delete()
 
-                        get_message(message=f"🟢 Snapshot removed successfully - {snapshot.snapshot_name}", is_finishprogram=False, finish_status_code=-1) 
+                        get_message(
+                                message=f"🟢 Snapshot removed successfully - {snapshot.snapshot_name}", 
+                                is_finishprogram=False, 
+                                finish_status_code=-1
+                            )
+                         
                     
                     else:
                         get_message(message="🔴 Error: Snapshot can not remove", is_finishprogram=True, finish_status_code=1) 
@@ -293,8 +298,7 @@ class Snapshot(models.Model):
                     resp = Danix.back_snapshot(filesystem_name, snapshot.snapshot_name)
 
                     if check_equal_sentence(resp, 0):
-                        get_message(message="🟢 Snapshot roll back successfully!", is_finishprogram=True, finish_status_code=0)
-
+                        get_message(message="🟢 Environment roll back successfully!", is_finishprogram=True, finish_status_code=0)
                     get_message(message="🔴 Error: Snapshot can not back", is_finishprogram=True, finish_status_code=1)
 
                 get_message(message="🔴 Error: Environment was removed!", is_finishprogram=True, finish_status_code=1)

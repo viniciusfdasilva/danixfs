@@ -27,7 +27,7 @@ usages.add_argument("-sc", "--snapshotcreate",      help="Create snapshot", requ
 usages.add_argument("-sb", "--snapshotback"  ,      help="Back snapshot",   required=False)
 usages.add_argument("-c", "--copy"  ,               help="Copy files and directories",   required=False)
 
-usages.add_argument("-o", "--option",   choices=["clike", "java", "python", "ruby", "lua", "go", "ada"], required=False)
+usages.add_argument("-o", "--option",   choices=["clike", "java", "python", "ruby", "lua", "go", "ada", "dotnet"], required=False)
 
 args = parser.parse_args()
 
@@ -38,8 +38,10 @@ languanges_and_softwares = {
                                 "ruby"   : Languanges.Ruby(),
                                 "lua"    : Languanges.Lua(),
                                 "go"     : Languanges.Go(),
-                                "ada"    : Languanges.Ada()
+                                "ada"    : Languanges.Ada(),
+                                "dotnet" : Languanges.Dotnet()
                             }
+
 if check_system_configuration():
     if args.option:
 

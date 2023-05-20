@@ -127,7 +127,7 @@ class Languanges():
 
     class Lua():
         
-        packages = ["lua5.3", "lua5.2"]
+        packages = ["lua5.4", "lua5.3", "lua5.2"]
         config_commands = []
 
         def install(self, environment_name, template):
@@ -143,6 +143,19 @@ class Languanges():
 
             Template.install(self.packages, environment_name, self.config_commands, template)
 
+
+    class Dotnet():
+
+        package = ["dotnet7-sdk", "dotnet6-sdk"]
+        config_commands = [
+                            "apk add bash icu-libs krb5-libs libgcc libintl libssl1.1 libstdc++ zlib",
+                            "export HOME=/home/"
+                            "export USERPROFILE=root",
+                           ]
+
+        def install(self, environment_name, template):
+
+            Template.install(self.package, environment_name,self.config_commands, template)    
 
     class Go():
 

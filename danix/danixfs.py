@@ -17,32 +17,53 @@ class Danix():
 
     @staticmethod
     def rm(filesystem_name):
-        return os.system(f"rm -r {MAIN_REPO}{filesystem_name} >/dev/null 2>&1")
+        
+        os.system(f'fuser -km {MAIN_REPO}{filesystem_name}/danixfs/proc/')
+        os.system(f"umount {MAIN_REPO}{filesystem_name}/danixfs/proc/ ")
+
+        os.system(f'fuser -km {MAIN_REPO}{filesystem_name}/danixfs/sys/')
+        os.system(f"umount {MAIN_REPO}{filesystem_name}/danixfs/sys/ >/dev/null 2>&1")
+
+        os.system(f'fuser -km {MAIN_REPO}{filesystem_name}/danixfs/dev/')
+        os.system(f"umount {MAIN_REPO}{filesystem_name}/danixfs/dev/ >/dev/null 2>&1")
+
+        #return os.system(f"rm -r {MAIN_REPO}{filesystem_name}")
 
     @staticmethod
     def get_size(environment_name, snapshot_name):
         try:
+
             if snapshot_name is None:
-                return du(f'{MAIN_REPO}{environment_name}/','-ch').split('\n')[-2].split('\t')[0]
+                return du(
+                            f'{MAIN_REPO}{environment_name}/',f'-ch', 
+                            f'--exclude={MAIN_REPO}{environment_name}/danixfs/proc/*', 
+                            f'--exclude={MAIN_REPO}{environment_name}/danixfs/dev/*', 
+                            f'--exclude={MAIN_REPO}{environment_name}/danixfs/sys/*'
+                        ).split('\n')[-2].split('\t')[0]
             else:
                 return du(f'{MAIN_REPO}.snapshots/{snapshot_name}/{environment_name}.tar.gz','-ch').split('\n')[-2].split('\t')[0]
-        except Exception:
+        except Exception as e:
+            print(e)
             return "00M"
         
     @staticmethod
     def make_snapshot(filesystem_name, snapshot_name):
 
         os.system(f"mkdir {MAIN_REPO}.snapshots/{snapshot_name} >/dev/null 2>&1")
-        resp = os.system(f"tar czf {MAIN_REPO}.snapshots/{snapshot_name}/{filesystem_name}.tar.gz {MAIN_REPO}{filesystem_name}/ >/dev/null 2>&1")
+        exclude_proc_dir = f"{MAIN_REPO}{filesystem_name}/danixfs/proc/*"
+        exclude_sys_dir  = f"{MAIN_REPO}{filesystem_name}/danixfs/sys/*"
+        exclude_dev_dir  = f"{MAIN_REPO}{filesystem_name}/danixfs/dev/*"
+
+        resp = os.system(f"tar -czf {MAIN_REPO}.snapshots/{snapshot_name}/{filesystem_name}.tar.gz --exclude={exclude_proc_dir} --exclude={exclude_dev_dir} --exclude={exclude_sys_dir} {MAIN_REPO}{filesystem_name}/ >/dev/null 2>&1")
         
         return resp
     
     @staticmethod
     def back_snapshot(filesystem_name, snapshot_name):
 
-        os.system(f"rm -r {MAIN_REPO}{filesystem_name} > /dev/null")  
+        Danix.rm(filesystem_name)
         resp1 = os.system(f"tar -xf {MAIN_REPO}.snapshots/{snapshot_name}/{filesystem_name}.tar.gz -C {MAIN_REPO} >/dev/null 2>&1")
-        resp2 = os.system(f"mv {MAIN_REPO}/opt/danix/{filesystem_name} {MAIN_REPO}")
+        resp2 = os.system(f"mv {MAIN_REPO}opt/danix/{filesystem_name} {MAIN_REPO}")
         resp3 = os.system(f"rm -r {MAIN_REPO}opt")
 
         return 0 if resp1+resp2+resp3 == 0 else 1
@@ -62,16 +83,19 @@ class Danix():
         os.system(f"rm /tmp/{filesystem}/{settings.ROOT_FS}")
         os.system(f"mv /tmp/{filesystem} {MAIN_REPO}")
 
+        os.system(f"mount --bind /proc/ {MAIN_REPO}{filesystem_uuid}/danixfs/proc/")
+        os.system(f"mount --bind /sys/  {MAIN_REPO}{filesystem_uuid}/danixfs/sys/")
+        os.system(f"mount --bind /dev/  {MAIN_REPO}{filesystem_uuid}/danixfs/dev/")
 
         print("\nPlease! Wait a moment!!")
         print("Building container:")
         print(f"Installing {len(packages)} packages\n")
 
-        for package in packages:
-            os.system(f"chroot {MAIN_REPO}{filesystem}/danixfs apk add {package}")
-
         for command in config_comands:
             os.system(f"chroot {MAIN_REPO}{filesystem}/danixfs {command}")
+
+        for package in packages:
+            os.system(f"chroot {MAIN_REPO}{filesystem}/danixfs apk add {package}")
 
         os.system(f"chroot {MAIN_REPO}{filesystem}/danixfs apk add fish")
         os.system(f"chroot {MAIN_REPO}{filesystem}/danixfs apk add ruby")
