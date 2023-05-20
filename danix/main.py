@@ -10,6 +10,7 @@ if not is_root():
     print("Please run this program with sudo!")
     exit(0)
     
+
 parser = argparse.ArgumentParser(prog="Danix", add_help=True)
 
 usages = parser.add_argument_group("usages")
