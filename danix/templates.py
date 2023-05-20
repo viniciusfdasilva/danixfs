@@ -4,7 +4,7 @@ from danixfs import Danix
 from utils import check_equal_sentence
 class Essentials():
 
-    packages = ["build-base", "vim", "nano", "micro", "git"]
+    packages = ["build-base", "vim","emacs","nano", "micro", "git"]
        
 
 class Template():

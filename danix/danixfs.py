@@ -17,17 +17,8 @@ class Danix():
 
     @staticmethod
     def rm(filesystem_name):
-        
-        os.system(f'fuser -km {MAIN_REPO}{filesystem_name}/danixfs/proc/')
-        os.system(f"umount {MAIN_REPO}{filesystem_name}/danixfs/proc/ ")
 
-        os.system(f'fuser -km {MAIN_REPO}{filesystem_name}/danixfs/sys/')
-        os.system(f"umount {MAIN_REPO}{filesystem_name}/danixfs/sys/ >/dev/null 2>&1")
-
-        os.system(f'fuser -km {MAIN_REPO}{filesystem_name}/danixfs/dev/')
-        os.system(f"umount {MAIN_REPO}{filesystem_name}/danixfs/dev/ >/dev/null 2>&1")
-
-        #return os.system(f"rm -r {MAIN_REPO}{filesystem_name}")
+        return os.system(f"rm -r {MAIN_REPO}{filesystem_name}")
 
     @staticmethod
     def get_size(environment_name, snapshot_name):
@@ -70,8 +61,7 @@ class Danix():
     
     @staticmethod
     def navigate(filesystem_uuid):
-
-        return os.system(f"chroot {MAIN_REPO}{filesystem_uuid}/danixfs sh {MAIN_REPO}init.d/init.sh")
+        return os.system(f"{MAIN_REPO}{filesystem_uuid}/danixfs/proot -r {MAIN_REPO}{filesystem_uuid}/danixfs/ -w / -0 -b /dev -b /sys -b /proc -b /run sh {MAIN_REPO}init.d/init.sh")
 
     @staticmethod
     def build_environment(packages, config_comands, filesystem_uuid):
@@ -82,10 +72,6 @@ class Danix():
         os.system(f"tar -xf /tmp/{filesystem}/{settings.ROOT_FS} -C /tmp/{filesystem}")
         os.system(f"rm /tmp/{filesystem}/{settings.ROOT_FS}")
         os.system(f"mv /tmp/{filesystem} {MAIN_REPO}")
-
-        os.system(f"mount --bind /proc/ {MAIN_REPO}{filesystem_uuid}/danixfs/proc/")
-        os.system(f"mount --bind /sys/  {MAIN_REPO}{filesystem_uuid}/danixfs/sys/")
-        os.system(f"mount --bind /dev/  {MAIN_REPO}{filesystem_uuid}/danixfs/dev/")
 
         print("\nPlease! Wait a moment!!")
         print("Building container:")
@@ -101,6 +87,10 @@ class Danix():
         os.system(f"chroot {MAIN_REPO}{filesystem}/danixfs apk add ruby")
         os.system(f"chroot {MAIN_REPO}{filesystem}/danixfs gem install lolcat")
         
+        os.system(f"rm -r {MAIN_REPO}{filesystem}/danixfs/dev >/dev/null 2>&1")
+        os.system(f"rm -r {MAIN_REPO}{filesystem}/danixfs/proc >/dev/null 2>&1")
+        os.system(f"rm -r {MAIN_REPO}{filesystem}/danixfs/sys >/dev/null 2>&1")
+
         print(f"Environment builded succesfully!")
         print("0 erros reported!")
         
