@@ -106,4 +106,4 @@ if check_system_configuration():
         Environment.copy(args.copy)
 else:
     print("🔴 Danix system is not configured!")
-    print("Plase run 'make config'")
+    print("Plase run 'danixclean' after 'danixconfig'\n\n")
