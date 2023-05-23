@@ -25,12 +25,11 @@ ifneq ($(shell id -u), 0)
 
 else
 	
-
 	@mkdir   $(DANIX_PATH) 2>&1
 	@cp -r * $(DANIX_PATH) 2>&1
 
-	@mkdir $(MAIN_REPO) > /dev/null 2>&1
-	@mkdir $(MAIN_REPO)/.snapshots > /dev/null 2>&1
+	@mkdir $(MAIN_REPO) 2>&1
+	@mkdir $(MAIN_REPO)/.snapshots 2>&1
 
 	@touch $(DANIX_PATH)/.env 2>&1
 
@@ -50,16 +49,30 @@ else
 	@$(PIP) install -r $(DANIX_PATH)/requirements.txt > /dev/null 2>&1
 
 	@$(PYTHON) $(DANIX_PATH)/manage.py migrate
+	
+	@echo "Installation successfully!!! Please 'make aliases without sudo'"
 
-	@echo "alias danix='sudo python $(DANIX_PATH)/main.py'" >> ~/.bashrc
-	@echo "alias danixconfig='make -C $(DANIX_PATH) config'" >> ~/.bashrc
-	@echo "alias danixclean='make -C $(DANIX_PATH) clean'" >> ~/.bashrc
-	@echo "Installation successfully!!!"
 endif
 	
+aliases:
+
+	@touch $(HOME)/.danix_aliases
+	@echo "if [ -f $(HOME)/.danix_aliases ]; then" >> $(HOME)/.bashrc 
+	@echo "		. $(HOME)/.danix_aliases" >> $(HOME)/.bashrc
+	@echo "fi" >> $(HOME)/.bashrc
+	@echo alias danix="'sudo python $(DANIX_PATH)/main.py'" >> $(HOME)/.danix_aliases
+	@echo alias danixconfig="'make -C $(DANIX_PATH) config'" >> $(HOME)/.danix_aliases
+	@echo alias danixclean="'make -C $(DANIX_PATH) clean'" >> $(HOME)/.danix_aliases
 
 
 config:
+
+ifneq ($(shell id -u), 0)
+
+	@echo "You are not root, run this target as root please"
+	@exit 0
+
+else
 
 	@mkdir $(MAIN_REPO) > /dev/null 2>&1
 	@mkdir $(MAIN_REPO)/.snapshots > /dev/null 2>&1
@@ -79,17 +92,17 @@ config:
 	@echo ENV_STOPPED=$(ENV_STOPPED) >> $(DANIX_PATH)/.env
 	
 	@touch $(DANIX_PATH)/db/$(DB_NAME) > /dev/null 2>&1
+
 	@$(PIP) install -r $(DANIX_PATH)/requirements.txt > /dev/null 2>&1
 
 	@$(PYTHON) $(DANIX_PATH)/manage.py migrate
 
-aliases:
-	@alias sudo='sudo '
-	@alias danix="python main.py"
-	@echo  Please run danix -h or python main.py -h
+endif
+
 
 clean:
 
+
 	@rm -r $(MAIN_REPO) > /dev/null 2>&1
-	@rm $(DANIX_PATH) > /dev/null 2>&1
+	@rm -r $(DANIX_PATH) > /dev/null 2>&1
 	@echo Danix cleaned!
