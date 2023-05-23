@@ -9,7 +9,7 @@
 A very simple subsystem builder!
 
 The Danixfs is a root filesystem management! Build a Alpine subsystem and pre install
-essentials packages and compiers from languanges choice by user: 
+essentials packages and compilers from languages choice by user: 
 # Image:
 
 #### Building a clike environment
@@ -31,13 +31,13 @@ essentials packages and compiers from languanges choice by user:
     * tar 1.34 or higher 
     * python3 or higher
     * pip3 or higher
-# Run Danix
+# Install Danix
 
 ```shell 
-$ sudo make config
+$ sudo make install
 ```
 
-To clean configuracion run:
+To clean configuration run:
 
 ```shell
 $ sudo make clean
@@ -49,7 +49,12 @@ $ danix -h
 
 ![](./img/img_vi.png)
 
+# Remove Danix
 
+To remove danix run:
+```shell
+$ sudo danixclean
+```
 # Common erros
 
 ![](./img/img_vii.png)
