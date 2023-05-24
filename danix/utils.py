@@ -1,5 +1,33 @@
 import os
-from settings import MAIN_REPO, MAIN_DIR, BASE_DIR
+import sh
+from settings import MAIN_REPO, MAIN_DIR, BASE_DIR, REPO_NAME
+
+
+def download_checksum():
+
+    return os.system(f"curl --silent -LO --output-dir /tmp/ {REPO_NAME}danixfs.checksum")
+
+
+def generate_checksum(package_path):
+    os.system("touch /tmp/local_danixfs.checksum")
+    return os.system(f"sha256sum {package_path} >> /tmp/local_danixfs.checksum")
+
+
+def remove_checksum_files():
+    os.system("rm /tmp/danixfs.checksum >/dev/null 2>&1")
+    os.system("rm /tmp/local_danixfs.checksum >/dev/null 2>&1")
+
+def read_line(file_path):
+    file = open(file_path, 'r')
+    checksum = file.readlines()
+    return checksum
+ 
+def validate_checksum(filesystem):
+
+    remote_checksum = ''.join(read_line(f"/tmp/danixfs.checksum")).replace(f"/tmp/{filesystem}/", "")
+    local_checksum  = ''.join(read_line(f"/tmp/local_danixfs.checksum")).replace(f"/tmp/{filesystem}/", "")
+
+    return True if local_checksum == remote_checksum else False
 
 def separate(path):
     list_path = path.split(" ")
@@ -91,6 +119,7 @@ def print_environment_list_header():
 
 @staticmethod
 def check_equal_sentence(left_expression, right_expression):
+
     return left_expression == right_expression
 
 @staticmethod
