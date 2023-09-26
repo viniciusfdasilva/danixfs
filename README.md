@@ -31,7 +31,13 @@ essentials packages and compilers from languages choice by user:
     * tar 1.34 or higher 
     * python3 or higher
     * pip3 or higher
+    * python-is-python3
 # Install Danix
+
+```shell
+$ cd danixfs
+```
+
 
 ```shell 
 $ sudo make install
@@ -59,7 +65,7 @@ $ sudo danixclean
 
 ![](./img/img_vii.png)
 
-To fix this erro open file *registry.py* located in /usr/local/lib/python3.10/dist-packages/django/apps/
+To fix this problem open file *registry.py*
 
 Search for 
 
@@ -67,10 +73,30 @@ Search for
 raise RuntimeError("populate() isn't reentrant")" 
 ```
 
-line. And replace for following code:
+line. And replace by following code:
 
 ```python
 self.app_configs = {}
 ```
 
-Save file and try again
+Save file and run
+
+
+```shell
+$ sudo make clean
+```
+
+
+```shell
+$ sudo make install
+```
+
+```shell
+$ sudo make aliases
+```
+
+Close terminal, open again and run
+
+```shell
+$ danix --help
+```
