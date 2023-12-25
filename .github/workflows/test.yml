@@ -26,5 +26,5 @@ jobs:
           python manage.py migrate
       - name: Run Danix
         run: |
-          # Run commnad
-          # Test
+          python danix.py
+
