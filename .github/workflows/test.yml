@@ -1,11 +1,7 @@
 name: Danix File System
 
-on:
-  push:
-    - dev
-
-  pull_request:
-    - main
+on: pull_request
+on: push
 
 jobs:
   continuous-integration:
