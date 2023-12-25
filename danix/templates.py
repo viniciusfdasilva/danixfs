@@ -92,6 +92,14 @@ class Template():
         return Template.essentials_menu() + Template.languange_menu(packages)
 
 class Languanges():
+
+    class VLang():
+        packages = ["v"]
+        config_commands = []
+
+        def install(self, environment_name, template):
+            Template.install(self.packages, environment_name, self.config_commands, template)
+
     class Python():
 
         packages = ["python3 py3-pip", "python3"]
