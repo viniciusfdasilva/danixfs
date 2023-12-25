@@ -1,0 +1,30 @@
+name: Danix File System
+
+on:
+  push:
+    - dev
+
+  pull_request:
+    - main
+
+jobs:
+  continuous-integration:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Test
+      - uses: actions/setup-python@v2
+      - with:
+          python-version: 3.11
+      - name: Install Requirements
+        run: |
+          pip install -r requirements.txt
+      - name: Creating Database
+        run: |
+          python manage.py makemigrations
+          python manage.py migrate
+      - name: Run Danix
+        run: |
+          python danix.py
+
