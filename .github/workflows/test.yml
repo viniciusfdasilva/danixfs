@@ -16,7 +16,7 @@ jobs:
       - name: Test
       - uses: actions/setup-python@v2
       - with:
-          python-version: 3.11
+          python-version: 3.10
       - name: Install Requirements
         run: |
           pip install -r requirements.txt
