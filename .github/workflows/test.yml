@@ -24,6 +24,6 @@ jobs:
           cd danix
           sudo apt install make -y
           sudo make install
-          sudo make aliases
+          make aliases
           danix
 
