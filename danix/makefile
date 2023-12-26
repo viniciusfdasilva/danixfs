@@ -50,7 +50,7 @@ else
 
 	@$(PYTHON) $(DANIX_PATH)/manage.py migrate
 	
-	@echo "Installation successfully!!! Please 'make aliases without sudo'"
+	@echo "Installation successfully!!! Please 'make aliases without' sudo"
 
 endif
 	

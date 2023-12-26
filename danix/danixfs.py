@@ -1,6 +1,8 @@
 import os, settings, app
 from sh import du
 from settings import MAIN_REPO
+from utils import download_checksum, validate_checksum
+from utils import get_message, check_equal_sentence as equals, generate_checksum, remove_checksum_files
 class Danix():
 
     @staticmethod
@@ -69,29 +71,43 @@ class Danix():
 
         os.system(f"mkdir /tmp/{filesystem}")
         os.system(f"curl --silent -LO --output-dir /tmp/{filesystem} {settings.REPO_NAME}/{settings.ROOT_FS}")
-        os.system(f"tar -xf /tmp/{filesystem}/{settings.ROOT_FS} -C /tmp/{filesystem}")
-        os.system(f"rm /tmp/{filesystem}/{settings.ROOT_FS}")
-        os.system(f"mv /tmp/{filesystem} {MAIN_REPO}")
-
-        print("\nPlease! Wait a moment!!")
-        print("Building container:")
-        print(f"Installing {len(packages)} packages\n")
-
-        for command in config_comands:
-            os.system(f"chroot {MAIN_REPO}{filesystem}/danixfs {command}")
-
-        for package in packages:
-            os.system(f"chroot {MAIN_REPO}{filesystem}/danixfs apk add {package}")
-
-        os.system(f"chroot {MAIN_REPO}{filesystem}/danixfs apk add fish")
-        os.system(f"chroot {MAIN_REPO}{filesystem}/danixfs apk add ruby")
-        os.system(f"chroot {MAIN_REPO}{filesystem}/danixfs gem install lolcat")
         
-        os.system(f"rm -r {MAIN_REPO}{filesystem}/danixfs/dev >/dev/null 2>&1")
-        os.system(f"rm -r {MAIN_REPO}{filesystem}/danixfs/proc >/dev/null 2>&1")
-        os.system(f"rm -r {MAIN_REPO}{filesystem}/danixfs/sys >/dev/null 2>&1")
-
-        print(f"Environment builded succesfully!")
-        print("0 erros reported!")
+        resp_downloaded_checksum = download_checksum() 
+        resp_generateed_checksum = generate_checksum(f"/tmp/{filesystem}/{settings.ROOT_FS}")
         
-        Danix.navigate(filesystem)
+        is_downloaded_and_generate = equals(resp_downloaded_checksum, 0) and equals(resp_generateed_checksum, 0)
+        
+        is_valid_checksum = validate_checksum(filesystem)
+
+        remove_checksum_files()
+
+        if is_downloaded_and_generate and is_valid_checksum:
+
+            os.system(f"tar -xf /tmp/{filesystem}/{settings.ROOT_FS} -C /tmp/{filesystem}")
+            os.system(f"rm /tmp/{filesystem}/{settings.ROOT_FS}")
+            os.system(f"mv /tmp/{filesystem} {MAIN_REPO}")
+
+            print("\nPlease! Wait a moment!!")
+            print("Building container:")
+            print(f"Installing {len(packages)} packages\n")
+
+            for command in config_comands:
+                os.system(f"chroot {MAIN_REPO}{filesystem}/danixfs {command}")
+
+            for package in packages:
+                os.system(f"chroot {MAIN_REPO}{filesystem}/danixfs apk add {package}")
+
+            os.system(f"chroot {MAIN_REPO}{filesystem}/danixfs apk add fish")
+            os.system(f"chroot {MAIN_REPO}{filesystem}/danixfs apk add ruby")
+            os.system(f"chroot {MAIN_REPO}{filesystem}/danixfs gem install lolcat")
+
+            os.system(f"rm -r {MAIN_REPO}{filesystem}/danixfs/dev >/dev/null 2>&1")
+            os.system(f"rm -r {MAIN_REPO}{filesystem}/danixfs/proc >/dev/null 2>&1")
+            os.system(f"rm -r {MAIN_REPO}{filesystem}/danixfs/sys >/dev/null 2>&1")
+
+            print(f"Environment builded succesfully!")
+            print("0 erros reported!")
+
+            Danix.navigate(filesystem)
+        else:
+            get_message("🔴 Failed integrity base image verification!", True, 1)

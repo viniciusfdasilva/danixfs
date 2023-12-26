@@ -3,13 +3,13 @@
 </html>
 
 * Author: Vinicius F. da Silva
-* Version 0.1
+* Version 0.1.4
 * Released: 2023
 
 A very simple subsystem builder!
 
 The Danixfs is a root filesystem management! Build a Alpine subsystem and pre install
-essentials packages and compiers from languanges choice by user: 
+essentials packages and compilers from languages choice by user: 
 # Image:
 
 #### Building a clike environment
@@ -31,13 +31,19 @@ essentials packages and compiers from languanges choice by user:
     * tar 1.34 or higher 
     * python3 or higher
     * pip3 or higher
-# Run Danix
+    * python-is-python3
+# Install Danix
 
-```shell 
-$ sudo make config
+```shell
+$ cd danixfs
 ```
 
-To clean configuracion run:
+
+```shell 
+$ sudo make install
+```
+
+To clean configuration run:
 
 ```shell
 $ sudo make clean
@@ -49,12 +55,17 @@ $ danix -h
 
 ![](./img/img_vi.png)
 
+# Remove Danix
 
+To remove danix run:
+```shell
+$ sudo danixclean
+```
 # Common erros
 
 ![](./img/img_vii.png)
 
-To fix this erro open file *registry.py* located in /usr/local/lib/python3.10/dist-packages/django/apps/
+To fix this problem open file *registry.py*
 
 Search for 
 
@@ -62,10 +73,30 @@ Search for
 raise RuntimeError("populate() isn't reentrant")" 
 ```
 
-line. And replace for following code:
+line. And replace by following code:
 
 ```python
 self.app_configs = {}
 ```
 
-Save file and try again
+Save file and run
+
+
+```shell
+$ sudo make clean
+```
+
+
+```shell
+$ sudo make install
+```
+
+```shell
+$ sudo make aliases
+```
+
+Close terminal, open again and run
+
+```shell
+$ danix --help
+```
