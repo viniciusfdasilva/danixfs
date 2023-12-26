@@ -24,7 +24,8 @@ jobs:
           sudo apt update -y
           sudo apt install make -y
           cd danix
-          sudo mv ./registry.py /usr/local/lib/python$(python --version 2>&1 | awk '{print $2}' | cut -d'.' -f1,2)/dist-packages/django/apps/registry.py
+          sudo rm /usr/local/lib/python$(python --version 2>&1 | awk '{print $2}' | cut -d'.' -f1,2)/dist-packages/django/apps/registry.py
+          sudo mv registry.py /usr/local/lib/python$(python --version 2>&1 | awk '{print $2}' | cut -d'.' -f1,2)/dist-packages/django/apps/
           sudo make install
           sudo make aliases
           sudo danix
