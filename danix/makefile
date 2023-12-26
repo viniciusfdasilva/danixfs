@@ -45,8 +45,8 @@ else
 	@echo ENV_STARTED=$(ENV_STARTED) >> $(DANIX_PATH)/.env
 	@echo ENV_STOPPED=$(ENV_STOPPED) >> $(DANIX_PATH)/.env
 	
-	@touch $(DANIX_PATH)/db/$(DB_NAME) > /dev/null 2>&1
-	@$(PIP) install -r $(DANIX_PATH)/requirements.txt > /dev/null 2>&1
+	@touch $(DANIX_PATH)/db/$(DB_NAME)
+	@$(PIP) install -r $(DANIX_PATH)/requirements.txt
 
 	@rm /usr/local/lib/python$(python --version 2>&1 | awk '{print $2}' | cut -d'.' -f1,2)/dist-packages/django/apps/registry.py
 	@mv $(DANIX_PATH)/registry.py /usr/local/lib/python$(python --version 2>&1 | awk '{print $2}' | cut -d'.' -f1,2)/dist-packages/django/apps/
