@@ -48,8 +48,8 @@ else
 	@touch $(DANIX_PATH)/db/$(DB_NAME)
 	@$(PIP) install -r $(DANIX_PATH)/requirements.txt
 	
-	@rm -r /opt/hostedtoolcache/Python/$(python --version 2>&1 | awk '{print $2}')/x64/lib/python$(python --version 2>&1 | awk '{print $2}' | cut -d'.' -f1,2)/site-packages/django/apps/registry.py
-	@mv $(DANIX_PATH)/registry.py /opt/hostedtoolcache/Python/$(python --version 2>&1 | awk '{print $2}')/x64/lib/python$(python --version 2>&1 | awk '{print $2}' | cut -d'.' -f1,2)/site-packages/django/apps/
+	@rm -r $(python -c "import sysconfig; print(sysconfig.get_paths()['purelib'])")/django/apps/registry.py
+	@mv $(DANIX_PATH)/registry.py $(python -c "import sysconfig; print(sysconfig.get_paths()['purelib'])")/django/apps/django/apps/
 
 	@$(PYTHON) $(DANIX_PATH)/manage.py migrate
 	
