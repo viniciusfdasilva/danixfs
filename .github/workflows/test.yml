@@ -21,9 +21,8 @@ jobs:
       
       - name: Install danix
         run: |
-          apt update -y
-          apt install make -y
+          sudo apt update -y
+          sudo apt install make -y
           cd danix
           make install
           make aliases
-
