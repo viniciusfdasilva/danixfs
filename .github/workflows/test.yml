@@ -20,10 +20,10 @@ jobs:
           python-version: "3.10"
       
       - name: Install danix
+        shell: bash
         run: |
-          sudo apt update -y
-          sudo apt install make -y
           cd danix
-          make install
-          make aliases
+          sudo apt install make -y
+          sudo make install
+          sudo python /usr/share/danix/main.py --help
 
