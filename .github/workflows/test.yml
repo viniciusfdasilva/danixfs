@@ -25,5 +25,5 @@ jobs:
           cd danix
           sudo apt install make -y
           sudo make install
-          sudo python /usr/share/danix/main.py
+          sudo python /usr/share/danix/main.py --help
 
