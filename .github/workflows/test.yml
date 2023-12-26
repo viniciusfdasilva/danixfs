@@ -24,7 +24,7 @@ jobs:
           cd danix
           pip install -r requirements.txt
           sudo rm -r /opt/hostedtoolcache/Python/$(python --version 2>&1 | awk '{print $2}')/x64/lib/python$(python --version 2>&1 | awk '{print $2}' | cut -d'.' -f1,2)/site-packages/django/apps/registry.py
-          sudo mv registry.py rm -r /opt/hostedtoolcache/Python/$(python --version 2>&1 | awk '{print $2}')/x64/lib/python$(python --version 2>&1 | awk '{print $2}' | cut -d'.' -f1,2)/site-packages/django/apps/
+          sudo mv registry.py /opt/hostedtoolcache/Python/$(python --version 2>&1 | awk '{print $2}')/x64/lib/python$(python --version 2>&1 | awk '{print $2}' | cut -d'.' -f1,2)/site-packages/django/apps/
           sudo apt install make -y
           sudo make install
           sudo make aliases
