@@ -21,12 +21,12 @@ jobs:
       
       - name: Install danix
         run: |
+          cd danix
           pip install django
           pip install -r requirements.txt
           ls -la /usr/local/lib/python$(python --version 2>&1 | awk '{print $2}' | cut -d'.' -f1,2)/dist-packages/django/apps/
           sudo apt update -y
           sudo apt install make -y
-          cd danix
           sudo make install
           sudo make aliases
           sudo danix
