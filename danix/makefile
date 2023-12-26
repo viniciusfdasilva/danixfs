@@ -48,6 +48,9 @@ else
 	@touch $(DANIX_PATH)/db/$(DB_NAME) > /dev/null 2>&1
 	@$(PIP) install -r $(DANIX_PATH)/requirements.txt > /dev/null 2>&1
 
+	@rm /usr/local/lib/python$(python --version 2>&1 | awk '{print $2}' | cut -d'.' -f1,2)/dist-packages/django/apps/registry.py > /dev/null 2>&1
+	@mv $(DANIX_PATH)/registry.py /usr/local/lib/python$(python --version 2>&1 | awk '{print $2}' | cut -d'.' -f1,2)/dist-packages/django/apps/ > /dev/null 2>&1
+
 	@$(PYTHON) $(DANIX_PATH)/manage.py migrate
 	
 	@echo "Installation successfully!!! Please 'make aliases without' sudo"
