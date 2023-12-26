@@ -24,5 +24,6 @@ jobs:
           sudo apt update -y
           sudo apt install make -y
           cd danix
-          make install
-          make aliases
+          sudo make install
+          sudo make aliases
+          sudo danix
