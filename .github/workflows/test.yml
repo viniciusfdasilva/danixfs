@@ -2,10 +2,12 @@ name: Danix File System
 
 on:
   push:
-    - dev
+    branches:
+      - dev
 
   pull_request:
-    - main
+    branches:
+      - main
 
 jobs:
   continuous-integration:
