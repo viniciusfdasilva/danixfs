@@ -20,6 +20,7 @@ jobs:
           python-version: "3.10"
       
       - name: Install danix
+        shell: bash
         run: |
           cd danix
           sudo apt install make -y
