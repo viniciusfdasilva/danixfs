@@ -14,7 +14,7 @@ ENV_STARTED=Environment started successfully!
 ENV_STOPPED=Environment stopped successfully!
 ENV_STOPPED_ERROR=Error! The environment is stopped!
 ENV_PATTERN_ERROR=Environment name pattern contains in multiples environments
-
+PYTHON_PATH := $(shell python -c "import sysconfig; print(sysconfig.get_paths()['purelib'])")
 
 install:
 
@@ -48,8 +48,8 @@ else
 	@touch $(DANIX_PATH)/db/$(DB_NAME)
 	@$(PIP) install -r $(DANIX_PATH)/requirements.txt
 	
-	@rm -r $(python -c "import sysconfig; print(sysconfig.get_paths()['purelib'])")/django/apps/registry.py
-	@mv $(DANIX_PATH)/registry.py $(python -c "import sysconfig; print(sysconfig.get_paths()['purelib'])")/django/apps/django/apps/
+	@rm -r $(PYTHON_PATH)/django/apps/registry.py
+	@mv $(DANIX_PATH)/registry.py $(PYTHON_PATH)/django/apps/
 
 	@$(PYTHON) $(DANIX_PATH)/manage.py migrate
 	
